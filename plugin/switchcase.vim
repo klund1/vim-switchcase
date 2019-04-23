@@ -5,7 +5,7 @@ endfunction
 " Splits the input |text| into a list of (lower case) words.
 " If |text| is all the same case, the only word separator is '_'.
 " If |text| contains upper and lower case letters, words are split on every
-" capital letter and number-letter border.
+" capital letter and letter-number border.
 function! s:SplitWords(text)
   if s:IsSnakeCase(a:text)
     return map(split(a:text, '_'), 'tolower(v:val)')
@@ -41,7 +41,13 @@ function! s:WordUnderCursor()
 endfunction
 
 function! s:ReplaceWordUnderCursor(word)
+  if a:word ==# s:WordUnderCursor()
+    return
+  endif
+  let l:initial_line = line('.')
+  let l:initial_collumn = col('.')
   exec "normal! ciw" . a:word
+  call cursor(l:initial_line, l:initial_collumn)
 endfunction
 
 command! SwitchSnakeCase :noautocmd call s:ReplaceWordUnderCursor(s:ToSnakeCase(s:WordUnderCursor()))
